@@ -133,7 +133,6 @@
     "sinon-spy-react": "^2.0.1",
     "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^4.8.1"
-
   },
   "scripts": {
     "postinstall": "./package_postinstall.sh",
