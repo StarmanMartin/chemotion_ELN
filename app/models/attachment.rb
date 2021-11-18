@@ -31,6 +31,8 @@
 
 
 class Attachment < ApplicationRecord
+  include Versionable
+
   include AttachmentJcampAasm
   include AttachmentJcampProcess
   include AttachmentConverter

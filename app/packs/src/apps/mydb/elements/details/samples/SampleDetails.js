@@ -60,6 +60,7 @@ import ScifinderSearch from 'src/components/scifinder/ScifinderSearch';
 import ElementDetailSortTab from 'src/apps/mydb/elements/details/ElementDetailSortTab';
 import { addSegmentTabs } from 'src/components/generic/SegmentDetails';
 import MeasurementsTab from 'src/apps/mydb/elements/details/samples/measurementsTab/MeasurementsTab';
+import VersionsTable from 'src/apps/mydb/elements/details/VersionsTable';
 
 const MWPrecision = 6;
 
@@ -1070,6 +1071,22 @@ export default class SampleDetails extends React.Component {
     );
   }
 
+  historyTab(ind) {
+    const { sample } = this.state;
+    if (!sample) { return null; }
+    return (
+      <Tab
+        eventKey={ind}
+        title="History"
+        key={`${sample.id}_${ind}`}
+      >
+        <ListGroupItem style={{ paddingBottom: 20 }}>
+          <VersionsTable type="samples" id={sample.id} />
+        </ListGroupItem>
+      </Tab>
+    );
+  }
+
   nmrSimTab(ind) {
     const { sample } = this.state;
     if (!sample) { return null; }
@@ -1210,7 +1227,8 @@ export default class SampleDetails extends React.Component {
       references: this.sampleLiteratureTab(),
       results: this.sampleImportReadoutTab('results'),
       qc_curation: this.qualityCheckTab('qc_curation'),
-      measurements: this.measurementsTab('measurements')
+      measurements: this.measurementsTab('measurements'),
+      history: this.historyTab('history'),
     };
 
     if (this.enableComputedProps) {
@@ -1295,7 +1313,13 @@ export default class SampleDetails extends React.Component {
               onTabPositionChanged={this.onTabPositionChanged}
             />
             {sfn ? <ScifinderSearch el={sample} /> : null}
-            <Tabs activeKey={currentActiveTab} onSelect={this.handleSelect} id="SampleDetailsXTab">
+            <Tabs
+              activeKey={currentActiveTab}
+              onSelect={this.handleSelect}
+              id="SampleDetailsXTab"
+              mountOnEnter
+              unmountOnExit
+            >
               {tabContents}
             </Tabs>
           </ListGroup>
