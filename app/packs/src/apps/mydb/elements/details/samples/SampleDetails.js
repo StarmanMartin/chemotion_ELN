@@ -147,6 +147,7 @@ export default class SampleDetails extends React.Component {
     this.handleSegmentsChange = this.handleSegmentsChange.bind(this);
     this.decoupleChanged = this.decoupleChanged.bind(this);
     this.handleFastInput = this.handleFastInput.bind(this);
+    this.updateGrandparent = this.updateGrandparent.bind(this);
   }
 
   componentDidMount() {
@@ -195,6 +196,19 @@ export default class SampleDetails extends React.Component {
     this.setState({
       sample,
     }, cb);
+  }
+
+  updateGrandparent(name, kind, value) {
+    let { sample } = this.state;
+    sample[name] = value;
+    if((name == 'boiling_point' || name == 'melting_point') && value) {
+      // remove parenthesis
+      value = value.replace(/[\])}[{(]/g, '');
+      let temperatureArr = value.split(',');
+      sample.updateRange(name, temperatureArr[0], temperatureArr[1]);
+    }
+    
+    this.setState({ sample });
   }
 
   handleFastInput(smi) {
@@ -1080,8 +1094,8 @@ export default class SampleDetails extends React.Component {
         title="History"
         key={`${sample.id}_${ind}`}
       >
-        <ListGroupItem style={{ paddingBottom: 20 }}>
-          <VersionsTable type="samples" id={sample.id} />
+        <ListGroupItem style={{ paddingBottom: 20 }} >
+          <VersionsTable type="samples" id={sample.id} updateGrandparent={this.updateGrandparent} />
         </ListGroupItem>
       </Tab>
     );
@@ -1230,7 +1244,6 @@ export default class SampleDetails extends React.Component {
       measurements: this.measurementsTab('measurements'),
       history: this.historyTab('history'),
     };
-
     if (this.enableComputedProps) {
       tabContentsMap.computed_props = this.moleculeComputedProps('computed_props');
     }

@@ -86,6 +86,8 @@ export default class ReactionDetails extends Component {
     if (!reaction.reaction_svg_file) {
       this.updateReactionSvg();
     }
+    
+    this.updateGrandparent = this.updateGrandparent.bind(this);
   }
 
   componentDidMount() {
@@ -407,6 +409,12 @@ export default class ReactionDetails extends Component {
     return reaction.hasMaterials() && reaction.SMGroupValid();
   }
 
+  updateGrandparent(name, kind, value) {
+    let { reaction } = this.state;
+    reaction[name] = value;
+    this.setState({ reaction });
+  }
+
   updateReactionSvg() {
     const { reaction } = this.state;
     const materialsSvgPaths = {
@@ -509,6 +517,7 @@ export default class ReactionDetails extends Component {
           <VersionsTable
             type="reactions"
             id={reaction.id}
+            updateGrandparent={this.updateGrandparent}
           />
         </Tab>
       ),
