@@ -12,7 +12,7 @@ import ElementStore from 'src/stores/alt/stores/ElementStore';
 import InboxStore from 'src/stores/alt/stores/InboxStore';
 import Xdiv from 'src/components/extra/CollectionTreeXdiv';
 import UserInfos from 'src/apps/mydb/collections/UserInfos';
-import { filterMySharedCollection, filterSharedWithMeCollection } from './CollectionTreeStructure'
+import { filterMySharedCollection, filterSharedWithMeCollection } from 'src/apps/mydb/collections/CollectionTreeStructure'
 
 import DeviceBox from 'src/apps/mydb/inbox/DeviceBox';
 import UnsortedBox from 'src/apps/mydb/inbox/UnsortedBox';
@@ -98,11 +98,17 @@ export default class CollectionTree extends React.Component {
 
     return newRoots;
   }
+  unsharedSubtrees() {
+    let roots = this.state.unsharedRoots;
+    roots = roots.filter(function (item) { return !item.isNew })
+
+    return this.subtrees(roots, null, false);
+  }
 
   myCollections() {
-    let { myCollections } = this.state;
-    myCollections = myCollections.filter(c => (c.is_shared === false && c.is_locked === false ));
+    let myCollections = this.state.myCollections;
 
+    myCollections = myCollections.filter(c => (c.is_shared === false && c.is_locked === false ));
     const subtrees = myCollections.map((root, index) => {
       return <CollectionSubtree root={root} key={index} />
     })
@@ -232,7 +238,8 @@ export default class CollectionTree extends React.Component {
 
   // remoteSyncInSubtrees() {
   sharedWithMeSubtrees() {
-    let { syncCollectionVisible, sharedCollections } = this.state
+    let { sharedCollections, sharedWithCollectionVisible } = this.state;
+
     let collections = filterSharedWithMeCollection(sharedCollections);
     let sharedLabelledRoots = {};
     sharedLabelledRoots = collections.map(e => {
@@ -247,7 +254,7 @@ export default class CollectionTree extends React.Component {
     let subTreeLabels = (
       <div className="tree-view">
         <div id="synchron-home-link" className="title" style={{backgroundColor:'white'}}
-             onClick={() => this.setState({ syncCollectionVisible: !syncCollectionVisible })}>
+             onClick={() => this.setState({ sharedWithCollectionVisible: !sharedWithCollectionVisible })}>
           <i className="fa fa-share-alt" />&nbsp;&nbsp;
           Shared with me &nbsp;
         </div>
@@ -255,7 +262,7 @@ export default class CollectionTree extends React.Component {
     )
 
     return this.subtrees(sharedLabelledRoots, subTreeLabels,
-      false, syncCollectionVisible, 'shared_by')
+      false, sharedWithCollectionVisible, 'shared_by')
   }
 
 
@@ -366,7 +373,7 @@ export default class CollectionTree extends React.Component {
           {this.myCollections()}
         </div>
         <div className="tree-wrapper">
-          {this.sharedSubtrees()}
+          {/*{this.sharedSubtrees()}*/}
         </div>
         <div className="tree-wrapper">
           {/*{this.remoteSubtrees()}*/}
