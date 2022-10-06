@@ -24,7 +24,7 @@ module ReportHelpers
         requires :checkedAll, type: Boolean
       end
       requires :currentCollection, type: Integer
-      requires :isSync, type: Boolean
+      requires :isShared, type: Boolean
     end
     # requires :columns, type: Array
   end

@@ -83,7 +83,7 @@ describe Chemotion::ReportAPI do
             reaction: no_checked,
             wellplate: no_checked,
             currentCollection: c.id,
-            isSync: false
+            isShared: false
           },
           columns: {
             analyses: [],
@@ -214,7 +214,7 @@ describe Chemotion::ReportAPI do
               checkedAll: false
             },
             currentCollection: c.id,
-            isSync: false
+            isShared: false
           },
           columns: %w[
             target_amount_value target_amount_unit
@@ -297,7 +297,7 @@ describe Chemotion::ReportAPI do
               checkedAll: false
             },
             currentCollection: c1.id,
-            isSync: false
+            isShared: false
           }
         }
       end
