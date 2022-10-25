@@ -95,7 +95,7 @@ class Molecule < ApplicationRecord
       molecule.molfile = is_partial && partial_molfile || molfile
       molecule.assign_molecule_data(babel_info, pubchem_info)
     end
- 
+
     molecule.ob_log = babel_info[:ob_log]
     molecule
   end
@@ -157,7 +157,7 @@ class Molecule < ApplicationRecord
     else
       mol_tag_data['pubchem_lcss'] = Chemotion::PubchemService.lcss_from_cid(cid)
       # updated_at of element_tags(not molecule) is updated
-      mol_tag.update_attributes taggable_data: mol_tag_data
+      mol_tag.update taggable_data: mol_tag_data
       mol_tag_data['pubchem_lcss'];
     end
   end
