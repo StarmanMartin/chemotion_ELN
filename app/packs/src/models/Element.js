@@ -119,6 +119,19 @@ export default class Element {
     return target;
   }
 
+  getListAnalysesLayouts() {
+    let target = new Set();
+    this.analysisContainers().forEach((aic) => {
+      const mKind = aic.extended_metadata.kind;
+      const kind = (mKind && mKind !== '') ? (mKind.split('|')[1].trim().split(' (')) : undefined;
+      const layout = kind !== undefined ? kind[kind.length-1] : undefined;
+      if (layout !== undefined) {
+        target.add(layout);
+      }
+    });
+    return Array.from(target);
+  }
+
   // Default empty quill-delta
   static quillDefault() {
     return { ops: [{ insert: '\n' }] };
