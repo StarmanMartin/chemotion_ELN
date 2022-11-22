@@ -120,16 +120,19 @@ export default class Element {
   }
 
   getListAnalysesLayouts() {
-    let target = new Set();
-    this.analysisContainers().forEach((aic) => {
+    let layouts = new Set();
+    const analysisContainers = this.analysisContainers();
+    analysisContainers.forEach((aic) => {
       const mKind = aic.extended_metadata.kind;
       const kind = (mKind && mKind !== '') ? (mKind.split('|')[1].trim().split(' (')) : undefined;
       const layout = kind !== undefined ? kind[kind.length-1] : undefined;
       if (layout !== undefined) {
-        target.add(layout);
+        layouts.add(layout);
       }
+
     });
-    return Array.from(target);
+
+    return { layouts: Array.from(layouts), data: analysisContainers }
   }
 
   // Default empty quill-delta

@@ -5,7 +5,8 @@ import ContainerRow from 'src/apps/mydb/elements/details/samples/analysesTab/Sam
 import {
   HeaderDeleted,
   HeaderNormal,
-  AnalysisModeBtn
+  AnalysisModeBtn,
+  CompareAnalysesBtn
 } from 'src/apps/mydb/elements/details/samples/analysesTab/SampleDetailsContainersAux';
 
 const RndNotAvailable = () => (
@@ -32,7 +33,10 @@ const RndOrder = ({
 }) => {
   return (
     <div>
-      <p>{AnalysisModeBtn(mode, toggleMode, isDisabled)}{addButton()}</p>
+      <p>
+        {AnalysisModeBtn(mode, toggleMode, isDisabled)}
+        {addButton()}
+      </p>
       {
         orderContainers.map((container, i) => {
           const id = container.id || `fake_${i}`;
@@ -94,7 +98,10 @@ const RndEdit = ({
 
   return (
     <div>
-      <p>{AnalysisModeBtn(mode, toggleMode, isDisabled)}{addButton()}</p>
+      <p>
+        {AnalysisModeBtn(mode, toggleMode, isDisabled)}
+        {CompareAnalysesBtn(sample)}
+        {addButton()}</p>
       <PanelGroup
         id="editable-analysis-list"
         defaultActiveKey={0}
