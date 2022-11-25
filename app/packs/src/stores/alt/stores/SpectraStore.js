@@ -19,9 +19,11 @@ class SpectraStore {
     this.fetched = false;
     this.writing = false;
     this.others = [];
+    this.showCompareModal = false;
 
     this.bindListeners({
       handleToggleModal: SpectraActions.ToggleModal,
+      handleToggleCompareModal: SpectraActions.ToggleCompareModal,
       handleLoadSpectra: SpectraActions.LoadSpectra,
       handleSaveToFile: SpectraActions.SaveToFile,
       handleRegenerate: SpectraActions.Regenerate,
@@ -73,6 +75,12 @@ class SpectraStore {
       fetched: false,
       others: [],
     });
+  }
+
+  handleToggleCompareModal() {
+    this.setState({
+      showCompareModal: !this.showCompareModal,
+    })
   }
 
   handleLoadSpectra({ fetchedFiles, spcInfos }) {

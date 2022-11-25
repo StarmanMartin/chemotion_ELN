@@ -16,8 +16,6 @@ import { contentToText } from 'src/utilities/quillFormat';
 import UIStore from 'src/stores/alt/stores/UIStore';
 import { chmoConversions } from 'src/components/OlsComponent';
 import { previewContainerImage } from 'src/utilities/imageHelper';
-import DropdownMenu from 'react-bootstrap/lib/DropdownMenu';
-import MutiLevelDropdown from 'src/components/common/MutiLevelDropdown';
 
 const qCheckPass = () => (
   <div style={{ display: 'inline', color: 'green' }}>
@@ -164,40 +162,6 @@ const orderModeBtn = (toggleMode, isDisabled) => (
     </span>
   </Button>
 );
-
-const buildMenuItem = (sample) => {
-  const listLayouts = sample.getListAnalysesLayouts();
-  const { layouts, data } = listLayouts;
-  // console.log(data);
-  let menuItems = layouts.map((layout) => {
-    const itemData = data.filter((d) => {
-      return d.extended_metadata.kind.indexOf(layout);
-    });
-    let submenu = null;
-    if (itemData) {
-      submenu = itemData.map((item) => {
-        const { children } = item;
-        const dataSets = children.filter(el => ~el.container_type.indexOf('dataset'));
-        let subSubMenu = null;
-        if (dataSets) {
-          subSubMenu = dataSets.map((dts) => {
-            return { title: dts.name, value: dts, submenu: [{title: 'Origin', value: 'origin'}, {title: 'Edited', value: 'edited'}] };
-          });
-        }
-        return { title: item.name, submenu: subSubMenu };
-      });
-    }
-    return { title: layout, value: layout, submenu: submenu }
-  });
-  return menuItems;
-}
-
-const CompareAnalysesBtn = (sample) => {
-  const menuItems = buildMenuItem(sample);
-  return (
-    <MutiLevelDropdown title="Compare analyses" menuItems={menuItems} />
-  )
-};
 
 const AnalysisModeBtn = (mode, toggleMode, isDisabled) => {
   switch (mode) {
@@ -410,4 +374,4 @@ const HeaderNormal = ({
   );
 };
 
-export { HeaderDeleted, HeaderNormal, AnalysisModeBtn, CompareAnalysesBtn };
+export { HeaderDeleted, HeaderNormal, AnalysisModeBtn };

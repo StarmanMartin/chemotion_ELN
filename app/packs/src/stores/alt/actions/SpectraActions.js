@@ -6,6 +6,10 @@ class SpectraActions {
     return null;
   }
 
+  ToggleCompareModal() {
+    return null;
+  }
+
   LoadSpectra(spcInfos) {
     const idxs = spcInfos && spcInfos.map(si => si.idx);
     if (idxs.length === 0) {
