@@ -94,6 +94,17 @@ export default class ContainerCompareAnalyses extends Component {
   }
 
   buildSelectAnalysesMenu() {
+    const filteredAttachments = (dataset) => {
+      if (dataset) {
+        const filtered = dataset.attachments.filter((attch) => {
+          const position = attch.filename.search(/[.]?dx$/);
+          return position > 0;
+        });
+        return filtered;
+      }
+      return false;
+    };
+
     const { sample } = this.props;
     const listLayouts = sample.getListAnalysesLayouts();
     const { layouts, data } = listLayouts;
@@ -109,7 +120,14 @@ export default class ContainerCompareAnalyses extends Component {
           let subSubMenu = null;
           if (dataSets) {
             subSubMenu = dataSets.map((dts) => {
-              return { title: dts.name, value: dts, children: [{title: 'Origin', value: 'origin'}, {title: 'Edited', value: 'edited'}], checkable: false };
+              const attachments = filteredAttachments(dts);
+              if (!attachments) {
+                return { title: dts.name, value: dts, checkable: false };
+              }
+              const subSubMenuChildren = attachments.map((item) => {
+                return { title: item.filename, value: item.id }
+              });
+              return { title: dts.name, value: dts, checkable: false , children: subSubMenuChildren };
             });
           }
           return { title: item.name, children: subSubMenu, checkable: false };
