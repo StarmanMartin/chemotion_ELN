@@ -33,10 +33,7 @@ class ViewSpectraCompare extends React.Component {
   getContent() {
     console.log(this.state);
     const { elementData } = this.props;
-    if (elementData) {
-      const groupAnalysedData = elementData.getListAnalysesLayouts();
-      console.log('elementData', groupAnalysedData);
-    }
+    
   }
 
   renderEmpty() {
@@ -56,7 +53,8 @@ class ViewSpectraCompare extends React.Component {
   }
   
   render() {
-    const { showCompareModal } = this.state;
+    const { showCompareModal, spectraCompare } = this.state;
+    console.log(spectraCompare);
 
     this.getContent();
 

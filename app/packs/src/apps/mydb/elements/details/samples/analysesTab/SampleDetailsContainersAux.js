@@ -10,7 +10,7 @@ import { stopBubble } from 'src/utilities/DomHelper';
 import ImageModal from 'src/components/common/ImageModal';
 import SpectraActions from 'src/stores/alt/actions/SpectraActions';
 import LoadingActions from 'src/stores/alt/actions/LoadingActions';
-import { BuildSpcInfos, JcampIds } from 'src/utilities/SpectraHelper';
+import { BuildSpcInfos, JcampIds, BuildSpectraComparedInfos } from 'src/utilities/SpectraHelper';
 import { hNmrCheckMsg, cNmrCheckMsg, msCheckMsg, instrumentText } from 'src/utilities/ElementUtils';
 import { contentToText } from 'src/utilities/quillFormat';
 import UIStore from 'src/stores/alt/stores/UIStore';
@@ -133,6 +133,56 @@ SpectraEditorBtn.defaultProps = {
   sample: {},
   hasChemSpectra: false,
   hasEditedJcamp: false,
+};
+
+const SpectraCompareBtn = ({
+  sample, spcInfos, hasJcamp, hasChemSpectra,
+  toggleSpectraModal,
+}) => (
+  <OverlayTrigger
+    placement="bottom"
+    delayShow={500}
+    overlay={<Tooltip id="spectra">Spectra Editor</Tooltip>}
+  >
+     <ButtonGroup className="button-right">
+      <SplitButton
+        id="spectra-editor-split-button"
+        pullRight
+        bsStyle="info"
+        bsSize="xsmall"
+        title={<i className="fa fa-area-chart" />}
+        onToggle={(open, event) => { if (event) { event.stopPropagation(); } }}
+        onClick={toggleSpectraModal}
+      >
+        <MenuItem
+          id="regenerate-spectra"
+          key="regenerate-spectra"
+          onSelect={(eventKey, event) => {
+            event.stopPropagation();
+            confirmRegenerate(event);
+          }}
+          disabled={!hasJcamp || !sample.can_update}
+        >
+          <i className="fa fa-refresh" /> Reprocess
+        </MenuItem>
+      </SplitButton>
+    </ButtonGroup>
+  </OverlayTrigger>
+);
+
+SpectraCompareBtn.propTypes = {
+  sample: PropTypes.object,
+  hasJcamp: PropTypes.bool,
+  spcInfos: PropTypes.array,
+  hasChemSpectra: PropTypes.bool,
+  toggleSpectraModal: PropTypes.func.isRequired,
+};
+
+SpectraCompareBtn.defaultProps = {
+  hasJcamp: false,
+  spcInfos: [],
+  sample: {},
+  hasChemSpectra: false,
 };
 
 const editModeBtn = (toggleMode, isDisabled) => (
@@ -259,6 +309,13 @@ const headerBtnGroup = (
     }
   }
 
+  const spcCompareInfo = BuildSpectraComparedInfos(sample, container);
+  const toggleCompareModal = (e) => {
+    e.stopPropagation();
+    SpectraActions.ToggleCompareModal();
+    SpectraActions.LoadSpectraCompare.defer(spcCompareInfo); // going to fetch files base on spcInfos
+  };
+
   const { hasChemSpectra } = UIStore.getState();
 
   return (
@@ -277,16 +334,27 @@ const headerBtnGroup = (
         analyses={[container]}
         ident={container.id}
       />
-      <SpectraEditorBtn
-        sample={sample}
-        hasJcamp={hasJcamp}
-        spcInfos={spcInfos}
-        hasChemSpectra={hasChemSpectra}
-        hasEditedJcamp={hasEditedJcamp}
-        toggleSpectraModal={toggleSpectraModal}
-        confirmRegenerate={confirmRegenerate}
-        confirmRegenerateEdited={confirmRegenerateEdited}
-      />
+      {
+        container.extended_metadata.is_comparison ? (
+          <SpectraCompareBtn
+            sample={sample}
+            hasJcamp={hasJcamp}
+            spcInfos={spcInfos}
+            toggleSpectraModal={toggleCompareModal}
+          />
+        ): (
+          <SpectraEditorBtn
+            sample={sample}
+            hasJcamp={hasJcamp}
+            spcInfos={spcInfos}
+            hasChemSpectra={hasChemSpectra}
+            hasEditedJcamp={hasEditedJcamp}
+            toggleSpectraModal={toggleSpectraModal}
+            confirmRegenerate={confirmRegenerate}
+            confirmRegenerateEdited={confirmRegenerateEdited}
+          />
+        )
+      }
       <span
         className="button-right add-to-report"
         onClick={stopBubble}
@@ -358,16 +426,22 @@ const HeaderNormal = ({
         }
         <div className="lower-text">
           <div className="main-title">{container.name}</div>
-          <div className="sub-title">Type: {kind}</div>
-          <div className="sub-title">
-            Status: {status} {qCheckMsg(sample, container)} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {insText}
-          </div>
-          <div className="desc sub-title">
-            <span style={{ float: 'left', marginRight: '5px' }}>
-              Content:
-            </span>
-            <QuillViewer value={contentOneLine} />
-          </div>
+          {
+            container.extended_metadata.is_comparison ? null : (
+              <>
+                <div className="sub-title">Type: {kind}</div>
+                <div className="sub-title">
+                  Status: {status} {qCheckMsg(sample, container)} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {insText}
+                </div>
+                <div className="desc sub-title">
+                  <span style={{ float: 'left', marginRight: '5px' }}>
+                    Content:
+                  </span>
+                  <QuillViewer value={contentOneLine} />
+                </div>
+              </>
+            )
+          }
         </div>
       </div>
     </div>

@@ -118,21 +118,25 @@ export default class Element {
     });
     return target;
   }
-
-  getListAnalysesLayouts() {
-    let layouts = new Set();
+  
+  getAnalysisContainersCompareable() {
+    let result = {};
     const analysisContainers = this.analysisContainers();
     analysisContainers.forEach((aic) => {
       const mKind = aic.extended_metadata.kind;
       const kind = (mKind && mKind !== '') ? (mKind.split('|')[1].trim().split(' (')) : undefined;
-      const layout = kind !== undefined ? kind[kind.length-1] : undefined;
+      let layout = kind !== undefined ? kind[kind.length-1] : undefined;
       if (layout !== undefined) {
-        layouts.add(layout);
+        layout = layout.replace(')', '');
+        let listAics = result[layout] ? result[layout] : [];
+        const dts = aic.children.filter(el => ~el.container_type.indexOf('dataset'));
+        const aicWithDataset = Object.assign({}, aic, { children: dts});
+        listAics.push(aicWithDataset);
+        result[layout] = listAics;
       }
 
     });
-
-    return { layouts: Array.from(layouts), data: analysisContainers }
+    return result;
   }
 
   // Default empty quill-delta

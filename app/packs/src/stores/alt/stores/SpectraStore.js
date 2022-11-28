@@ -20,6 +20,7 @@ class SpectraStore {
     this.writing = false;
     this.others = [];
     this.showCompareModal = false;
+    this.spectraCompare = [];
 
     this.bindListeners({
       handleToggleModal: SpectraActions.ToggleModal,
@@ -34,6 +35,7 @@ class SpectraStore {
       handleSelectIdx: SpectraActions.SelectIdx,
       handleAddOthers: SpectraActions.AddOthers,
       handleRegenerateEdited: SpectraActions.RegenerateEdited,
+      handleLoadSpectraCompare: SpectraActions.LoadSpectraCompare,
     });
   }
 
@@ -91,6 +93,14 @@ class SpectraStore {
       fetched: true,
       spcIdx: (spcMetas[0].idx || 0),
       others: [],
+    });
+  }
+
+  handleLoadSpectraCompare({ fetchedFiles, spcInfos }) {
+    const spcMetas = this.decodeSpectra(fetchedFiles);
+    this.setState({
+      spectraCompare: spcMetas,
+      fetched: true,
     });
   }
 

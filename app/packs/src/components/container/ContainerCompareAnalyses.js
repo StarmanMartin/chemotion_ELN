@@ -65,13 +65,6 @@ export default class ContainerCompareAnalyses extends Component {
         container.description = ev.currentTarget.value;
         isChanged = true;
         break;
-      case 'kind': {
-        let kind = (ev || '');
-        kind = `${kind.split('|')[0].trim()} | ${(kind.split('|')[1] || '').trim()}`;
-        container.extended_metadata.kind = kind;
-        isChanged = true;
-        break;
-      }
       case 'status':
         container.extended_metadata.status = ev ? ev.value : undefined;
         isChanged = true;
@@ -79,6 +72,10 @@ export default class ContainerCompareAnalyses extends Component {
       case 'content':
         container.extended_metadata.content = ev;
         isChanged = true;
+        break;
+      case 'spectra':
+        isChanged = true;
+        container.extended_metadata.analyses_compared = ev;
         break;
       default:
         break;
@@ -106,40 +103,33 @@ export default class ContainerCompareAnalyses extends Component {
     };
 
     const { sample } = this.props;
-    const listLayouts = sample.getListAnalysesLayouts();
-    const { layouts, data } = listLayouts;
-    let menuItems = layouts.map((layout) => {
-      const itemData = data.filter((d) => {
-        return d.extended_metadata.kind ? d.extended_metadata.kind.indexOf(layout) : false;
-      });
-      let children = null;
-      if (itemData) {
-        children = itemData.map((item) => {
-          const { children } = item;
-          const dataSets = children.filter(el => ~el.container_type.indexOf('dataset'));
-          let subSubMenu = null;
-          if (dataSets) {
-            subSubMenu = dataSets.map((dts) => {
-              const attachments = filteredAttachments(dts);
-              if (!attachments) {
-                return { title: dts.name, value: dts, checkable: false };
-              }
-              const subSubMenuChildren = attachments.map((item) => {
-                return { title: item.filename, value: item.id }
-              });
-              return { title: dts.name, value: dts, checkable: false , children: subSubMenuChildren };
+    const listComparible = sample.getAnalysisContainersCompareable();
+    const menuItems = Object.keys(listComparible).map((layout) => {
+      const listAics = listComparible[layout].map((aic)=> {
+        const { children } = aic;
+        let subSubMenu = null;
+        if (children) {
+          subSubMenu = children.map((dts) => {
+            const attachments = filteredAttachments(dts);
+            const dataSetName = dts.name;
+            if (!attachments) {
+              return { title: dataSetName, value: dts, checkable: false };
+            }
+            const spectraItems = attachments.map((item) => {
+              return { title: item.filename, key: item.id, value: item.id }
             });
-          }
-          return { title: item.name, children: subSubMenu, checkable: false };
-        });
-      }
-      return { title: layout, value: layout, children: children, checkable: false }
+            return { title: dts.name, key: dts.id, value: dts, checkable: false , children: spectraItems };
+          });
+        }
+        return { title: aic.name, key: aic.id, children: subSubMenu, checkable: false };
+      });
+      return { title: layout, value: layout, children: listAics, checkable: false }
     });
     return menuItems;
   }
 
   render() {
-    const { container, textTemplate } = this.state;
+    const { container } = this.state;
     const { readOnly, disabled } = this.props;
     const treeAnalysesData = this.buildSelectAnalysesMenu();
 
@@ -177,6 +167,7 @@ export default class ContainerCompareAnalyses extends Component {
               placeholder="Please select"
               treeCheckable={true}
               treeData={treeAnalysesData}
+              onChange={this.handleInputChange.bind(this, 'spectra')}
             />
           </div>
         </Col>

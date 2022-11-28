@@ -26,6 +26,7 @@ module Entities
         metadata[:report] = report
         metadata[:content] = JSON.parse(object.extended_metadata['content']) if object.extended_metadata['content'].present?
         metadata[:hyperlinks] = JSON.parse(object.extended_metadata['hyperlinks']) if object.extended_metadata['hyperlinks'].present?
+        metadata[:is_comparison] = object.extended_metadata['is_comparison'] if object.extended_metadata['is_comparison'].present?
       end
     end
 

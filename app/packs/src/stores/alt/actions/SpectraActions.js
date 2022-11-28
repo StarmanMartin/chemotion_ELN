@@ -26,6 +26,22 @@ class SpectraActions {
     };
   }
 
+  LoadSpectraCompare(spcInfos) {
+    const idxs = spcInfos && spcInfos.map(si => si.idx);
+    if (idxs.length === 0) {
+      return null;
+    }
+
+    return (dispatch) => {
+      AttachmentFetcher.fetchFiles(idxs)
+        .then((fetchedFiles) => {
+          dispatch({ fetchedFiles, spcInfos });
+        }).catch((errorMessage) => {
+          console.log(errorMessage); // eslint-disable-line
+        });
+    };
+  }
+
   Regenerate(jcampIds, cb) {
     return (dispatch) => {
       AttachmentFetcher.regenerateSpectrum(jcampIds)

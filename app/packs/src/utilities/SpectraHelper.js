@@ -87,4 +87,15 @@ const BuildSpcInfos = (sample, container) => {
   ));
 };
 
-export { BuildSpcInfos, JcampIds }; // eslint-disable-line
+const BuildSpectraComparedInfos = (sample, container) => {
+  if (!sample || !container) return [];
+  const { analyses_compared } = container.extended_metadata;
+  if (!analyses_compared) return [];
+  return analyses_compared.map(file_id => (
+    {
+      idx: file_id,
+    }
+  ));
+};
+
+export { BuildSpcInfos, JcampIds, BuildSpectraComparedInfos }; // eslint-disable-line
