@@ -14,10 +14,6 @@
     "eamodio.gitlens",
     "streetsidesoftware.code-spell-checker"
   ],
-  "forwardPorts": [
-    3000,
-    5432
-  ],
   "initializeCommand": [
     "/bin/bash",
     ".devcontainer/pre_create.sh"
@@ -31,5 +27,11 @@
   "overrideCommand": true, // override the commands in the compose file
   "containerEnv": {
     "RAILS_ENV": "development"
-  }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {}
+  }, // https://github.com/devcontainers/features/blob/64f0e10fab232f132c566f5c70d419f3106c381b/src/desktop-lite/README.md
+  "forwardPorts": [
+    6080
+  ]
 }
