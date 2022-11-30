@@ -24,6 +24,7 @@ export default class ContainerCompareAnalyses extends Component {
 
     this.handleTemplateChange = this.handleTemplateChange.bind(this);
     this.buildSelectAnalysesMenu = this.buildSelectAnalysesMenu.bind(this);
+    this.handleChangeSelectAnalyses = this.handleChangeSelectAnalyses.bind(this);
     
   }
 
@@ -73,15 +74,36 @@ export default class ContainerCompareAnalyses extends Component {
         container.extended_metadata.content = ev;
         isChanged = true;
         break;
-      case 'spectra':
-        isChanged = true;
-        container.extended_metadata.analyses_compared = ev;
-        break;
       default:
         break;
     }
 
     if (isChanged) this.onChange(container);
+  }
+
+  handleChangeSelectAnalyses(treeData, value) {
+    const { container } = this.state;
+    console.log(value);
+    console.log(treeData);
+    // const selectedData = treeData.filter((layout) => {
+    //   const analyses = layout.children;
+    //   console.log('analyses', analyses);
+    //   const selectedAnalysis = analyses.filter((aic) => {
+    //     const datasets = aic.children;
+    //     const selectedDataSet = datasets.filter((dts) => {
+    //       const listFiles = dts.children;
+    //       const selectedFiles = listFiles.map((file) => {
+    //         return value.includes(file.value);
+    //       });
+    //       return selectedFiles.length > 0;
+    //     });
+    //     return selectedDataSet.length > 0;
+    //   });
+    //   return selectedAnalysis.length > 0;
+    // });
+    // console.log('selectedData', selectedData);
+    container.extended_metadata.analyses_compared = value;
+    this.onChange(container);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -167,7 +189,7 @@ export default class ContainerCompareAnalyses extends Component {
               placeholder="Please select"
               treeCheckable={true}
               treeData={treeAnalysesData}
-              onChange={this.handleInputChange.bind(this, 'spectra')}
+              onChange={this.handleChangeSelectAnalyses.bind(this, treeAnalysesData)}
             />
           </div>
         </Col>

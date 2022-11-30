@@ -168,7 +168,7 @@ export default class SampleDetailsContainers extends Component {
         <Button
           bsSize="xsmall"
           bsStyle="success"
-          onClick={this.handleAdd}
+          onClick={() => this.handleAdd(false)}
           disabled={!sample.can_update}
         >
           <i className="fa fa-plus" />&nbsp;

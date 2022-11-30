@@ -136,7 +136,7 @@ SpectraEditorBtn.defaultProps = {
 };
 
 const SpectraCompareBtn = ({
-  sample, spcInfos, hasJcamp, hasChemSpectra,
+  sample, spcInfos, spectraCompare,
   toggleSpectraModal,
 }) => (
   <OverlayTrigger
@@ -153,8 +153,9 @@ const SpectraCompareBtn = ({
         title={<i className="fa fa-area-chart" />}
         onToggle={(open, event) => { if (event) { event.stopPropagation(); } }}
         onClick={toggleSpectraModal}
+        disabled={!(spcInfos.length > 0) || (spectraCompare.length > 0)}
       >
-        <MenuItem
+        {/* <MenuItem
           id="regenerate-spectra"
           key="regenerate-spectra"
           onSelect={(eventKey, event) => {
@@ -164,7 +165,7 @@ const SpectraCompareBtn = ({
           disabled={!hasJcamp || !sample.can_update}
         >
           <i className="fa fa-refresh" /> Reprocess
-        </MenuItem>
+        </MenuItem> */}
       </SplitButton>
     </ButtonGroup>
   </OverlayTrigger>
@@ -172,14 +173,14 @@ const SpectraCompareBtn = ({
 
 SpectraCompareBtn.propTypes = {
   sample: PropTypes.object,
-  hasJcamp: PropTypes.bool,
+  spectraCompare: PropTypes.object,
   spcInfos: PropTypes.array,
   hasChemSpectra: PropTypes.bool,
   toggleSpectraModal: PropTypes.func.isRequired,
 };
 
 SpectraCompareBtn.defaultProps = {
-  hasJcamp: false,
+  spectraCompare: [],
   spcInfos: [],
   sample: {},
   hasChemSpectra: false,
@@ -316,7 +317,7 @@ const headerBtnGroup = (
     SpectraActions.LoadSpectraCompare.defer(spcCompareInfo); // going to fetch files base on spcInfos
   };
 
-  const { hasChemSpectra } = UIStore.getState();
+  const { hasChemSpectra, spectraCompare } = UIStore.getState();
 
   return (
     <div className="upper-btn">
@@ -338,8 +339,8 @@ const headerBtnGroup = (
         container.extended_metadata.is_comparison ? (
           <SpectraCompareBtn
             sample={sample}
-            hasJcamp={hasJcamp}
-            spcInfos={spcInfos}
+            spectraCompare={spectraCompare}
+            spcInfos={spcCompareInfo}
             toggleSpectraModal={toggleCompareModal}
           />
         ): (
