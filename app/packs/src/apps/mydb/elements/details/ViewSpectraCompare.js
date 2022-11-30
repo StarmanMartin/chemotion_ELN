@@ -80,7 +80,7 @@ class ViewSpectraCompare extends React.Component {
   }
 
   renderSpectraEditor(spectraCompare) {
-    console.log(spectraCompare);
+    // console.log(spectraCompare);
 
     let currEntity = null;
 
@@ -103,10 +103,16 @@ class ViewSpectraCompare extends React.Component {
 
     return (
       <Modal.Body>
-        <SpectraEditor
-          entity={currEntity}
-          multiEntities={multiEntities}
-        />
+        {
+          (!multiEntities && multiEntities.length === 0 ) ? this.renderEmpty() :
+          (
+            <SpectraEditor
+              entity={currEntity}
+              multiEntities={multiEntities}
+            />
+          )
+        }
+        
       </Modal.Body>
     );
   }
