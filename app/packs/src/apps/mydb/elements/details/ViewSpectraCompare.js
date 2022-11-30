@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Well } from "react-bootstrap";
+import { Button, Modal, Well } from "react-bootstrap";
 import SpectraActions from 'src/stores/alt/actions/SpectraActions';
 import SpectraStore from 'src/stores/alt/stores/SpectraStore';
 import { SpectraEditor, FN } from '@complat/react-spectra-editor';
@@ -14,6 +14,7 @@ class ViewSpectraCompare extends React.Component {
     };
 
     this.onChange = this.onChange.bind(this);
+    this.closeOp = this.closeOp.bind(this);
     this.getContent = this.getContent.bind(this);
     this.renderEmpty = this.renderEmpty.bind(this);
     this.renderSpectraEditor = this.renderSpectraEditor.bind(this);
@@ -38,6 +39,10 @@ class ViewSpectraCompare extends React.Component {
     
   }
 
+  closeOp() {
+    SpectraActions.ToggleCompareModal.defer();
+  }
+
   renderEmpty() {
     const content = <Well onClick={this.closeOp}>
       <i className="fa fa-exclamation-triangle fa-3x" />
@@ -50,6 +55,26 @@ class ViewSpectraCompare extends React.Component {
     return (
       <div className="card-box">
         {content}
+      </div>
+    );
+  }
+
+  renderTitle() {
+    return (
+      <div className="spectra-editor-title">
+        <span className="txt-spectra-editor-title">
+          {'modalTitle'}
+        </span>
+        <Button
+          bsStyle="danger"
+          bsSize="small"
+          className="button-right"
+          onClick={this.closeOp}
+        >
+          <span>
+            <i className="fa fa-times" /> Close without Save
+          </span>
+        </Button>
       </div>
     );
   }
@@ -93,10 +118,14 @@ class ViewSpectraCompare extends React.Component {
     this.getContent();
 
     return (
-      <div className="compare-spectra-editor">
+      <div className="spectra-editor">
         <Modal
           show={showCompareModal}
+          dialogClassName={'spectra-editor-dialog'}
         >
+          {
+            this.renderTitle()
+          }
           {
             (spectraCompare && spectraCompare.length > 0) ? this.renderSpectraEditor(spectraCompare) : this.renderEmpty()
           }

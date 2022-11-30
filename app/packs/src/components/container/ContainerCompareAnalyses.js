@@ -94,7 +94,7 @@ export default class ContainerCompareAnalyses extends Component {
     const filteredAttachments = (dataset) => {
       if (dataset) {
         const filtered = dataset.attachments.filter((attch) => {
-          const position = attch.filename.search(/[.]?dx$/);
+          const position = attch.filename.search(/[.]jdx$/);
           return position > 0;
         });
         return filtered;

@@ -359,7 +359,12 @@ class ViewSpectra extends React.Component {
     const { curveIdx } = curveSt;
     const si = this.getSpcInfo(curveIdx);
     if (!si) return;
-    const fPeaks = FN.rmRef(peaks, shift);
+
+    const selectedShift = shift.shifts[curveIdx];
+    const selectedIntegration = integration.integrations[curveIdx];
+    const selectedMultiplicity = multiplicity.multiplicities[curveIdx];
+
+    const fPeaks = FN.rmRef(peaks, selectedShift);
     const peaksStr = FN.toPeakStr(fPeaks);
     const predict = JSON.stringify(rmRefreshed(analysis));
     const waveLengthStr = JSON.stringify(waveLength);
@@ -369,11 +374,11 @@ class ViewSpectra extends React.Component {
     SpectraActions.SaveToFile.defer(
       si,
       peaksStr,
-      shift,
+      selectedShift,
       scan,
       thres,
-      JSON.stringify(integration),
-      JSON.stringify(multiplicity),
+      JSON.stringify(selectedIntegration),
+      JSON.stringify(selectedMultiplicity),
       predict,
       handleSubmit,
       keepPred,
