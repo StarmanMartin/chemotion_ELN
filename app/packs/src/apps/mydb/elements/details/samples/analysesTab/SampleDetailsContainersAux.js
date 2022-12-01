@@ -16,6 +16,7 @@ import { contentToText } from 'src/utilities/quillFormat';
 import UIStore from 'src/stores/alt/stores/UIStore';
 import { chmoConversions } from 'src/components/OlsComponent';
 import { previewContainerImage } from 'src/utilities/imageHelper';
+import SpectraStore from 'src/stores/alt/stores/SpectraStore';
 
 const qCheckPass = () => (
   <div style={{ display: 'inline', color: 'green' }}>
@@ -313,11 +314,12 @@ const headerBtnGroup = (
   const spcCompareInfo = BuildSpectraComparedInfos(sample, container);
   const toggleCompareModal = (e) => {
     e.stopPropagation();
-    SpectraActions.ToggleCompareModal();
+    SpectraActions.ToggleCompareModal(container);
     SpectraActions.LoadSpectraCompare.defer(spcCompareInfo); // going to fetch files base on spcInfos
   };
 
-  const { hasChemSpectra, spectraCompare } = UIStore.getState();
+  const { hasChemSpectra } = UIStore.getState();
+  const { spectraCompare } = SpectraStore.getState();
 
   return (
     <div className="upper-btn">

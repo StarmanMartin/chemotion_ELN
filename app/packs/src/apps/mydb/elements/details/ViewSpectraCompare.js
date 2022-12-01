@@ -3,6 +3,9 @@ import { Button, Modal, Well } from "react-bootstrap";
 import SpectraActions from 'src/stores/alt/actions/SpectraActions';
 import SpectraStore from 'src/stores/alt/stores/SpectraStore';
 import { SpectraEditor, FN } from '@complat/react-spectra-editor';
+import { TreeSelect } from "antd";
+import { BuildSpectraComparedSelection, GetSelectedComparedAnalyses, BuildSpectraComparedInfos } from "src/utilities/SpectraHelper";
+import PropTypes from 'prop-types';
 
 class ViewSpectraCompare extends React.Component {
 
@@ -15,9 +18,9 @@ class ViewSpectraCompare extends React.Component {
 
     this.onChange = this.onChange.bind(this);
     this.closeOp = this.closeOp.bind(this);
-    this.getContent = this.getContent.bind(this);
     this.renderEmpty = this.renderEmpty.bind(this);
     this.renderSpectraEditor = this.renderSpectraEditor.bind(this);
+    this.handleChangeSelectAnalyses = this.handleChangeSelectAnalyses.bind(this);
   }
 
   componentDidMount() {
@@ -33,12 +36,19 @@ class ViewSpectraCompare extends React.Component {
     this.setState({ ...origState, ...newState });
   }
 
-  getContent() {
-    console.log(this.state);
+  handleChangeSelectAnalyses(treeData, selectedFiles, info) {
+    const { elementData, handleSampleChanged } = this.props;
+    const { container } = this.state;
+    const selectedData = GetSelectedComparedAnalyses(container, treeData, selectedFiles, info);
+    container.extended_metadata.analyses_compared = selectedData;
+    handleSampleChanged(elementData);
+
+    const spcCompareInfo = BuildSpectraComparedInfos(elementData, container);
+    SpectraActions.LoadSpectraCompare.defer(spcCompareInfo);
   }
 
   closeOp() {
-    SpectraActions.ToggleCompareModal.defer();
+    SpectraActions.ToggleCompareModal.defer(null);
   }
 
   renderEmpty() {
@@ -58,11 +68,36 @@ class ViewSpectraCompare extends React.Component {
   }
 
   renderTitle() {
+    const { elementData } = this.props;
+    const treeAnalysesData = BuildSpectraComparedSelection(elementData);
+    const { container } = this.state;
+    let modalTitle = '';
+    let selectedFiles = [];
+    if (container) {
+      modalTitle = container.name;
+      const { analyses_compared } = container.extended_metadata;
+      if (analyses_compared) {
+        selectedFiles = analyses_compared.map(analysis => (
+          analysis.file.id
+        ));
+      }
+    }
+
     return (
       <div className="spectra-editor-title">
         <span className="txt-spectra-editor-title">
-          {'modalTitle'}
+          {modalTitle}
         </span>
+        <div style={{ display: 'inline-flex', margin: '0 0 0 100px' }} >
+          <TreeSelect
+            style={{ width: '100%' }}
+            placeholder="Please select"
+            treeCheckable={true}
+            treeData={treeAnalysesData}
+            value={selectedFiles}
+            onChange={this.handleChangeSelectAnalyses.bind(this, treeAnalysesData)}
+          />
+        </div>
         <Button
           bsStyle="danger"
           bsSize="small"
@@ -78,8 +113,6 @@ class ViewSpectraCompare extends React.Component {
   }
 
   renderSpectraEditor(spectraCompare) {
-    // console.log(spectraCompare);
-
     let currEntity = null;
 
     const multiEntities = spectraCompare.map((spc) => {
@@ -116,6 +149,7 @@ class ViewSpectraCompare extends React.Component {
   }
   
   render() {
+    
     const { showCompareModal, spectraCompare } = this.state;
 
     // this.getContent();
@@ -138,6 +172,9 @@ class ViewSpectraCompare extends React.Component {
   }
 }
 
-
+ViewSpectraCompare.propTypes = {
+  elementData: PropTypes.object.isRequired,
+  handleSampleChanged: PropTypes.func.isRequired,
+};
 
 export default ViewSpectraCompare;

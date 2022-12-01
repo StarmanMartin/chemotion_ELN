@@ -6,6 +6,7 @@ import TextTemplateActions from 'src/stores/alt/actions/TextTemplateActions';
 import Select from 'react-select';
 import { confirmOptions } from 'src/components/staticDropdownOptions/options';
 import { TreeSelect } from 'antd';
+import { BuildSpectraComparedSelection, GetSelectedComparedAnalyses } from 'src/utilities/SpectraHelper';
 
 export default class ContainerCompareAnalyses extends Component {
   constructor(props) {
@@ -82,33 +83,8 @@ export default class ContainerCompareAnalyses extends Component {
   }
 
   handleChangeSelectAnalyses(treeData, selectedFiles, info) {
-    const getParentNode = (key, tree) => {
-      let parentNode;
-      for (let i = 0; i < tree.length; i++) {
-        const node = tree[i];
-        if (node.children) {
-          if (node.children.some(item => item.key === key)) {
-            parentNode = node;
-          } else if (getParentNode(key, node.children)) {
-            parentNode = getParentNode (key, node.children);
-          }
-        }
-      }
-      return parentNode;
-    }
-
     const { container } = this.state;
-    const selectedData = selectedFiles.map((fileID, idx) => {
-      const dataset = getParentNode(fileID, treeData);
-      const analysis = getParentNode(dataset.key, treeData);
-      const layout = getParentNode(analysis.key, treeData);
-      return { 
-        file: { name: info[idx], id: fileID },
-        dataset: { name: dataset.title, id: dataset.key },
-        analysis: { name: analysis.title, id: analysis.key },
-        layout: layout.title,
-       }
-    });
+    const selectedData = GetSelectedComparedAnalyses(container, treeData, selectedFiles, info);
     container.extended_metadata.analyses_compared = selectedData;
     this.onChange(container);
   }
@@ -120,40 +96,8 @@ export default class ContainerCompareAnalyses extends Component {
   }
 
   buildSelectAnalysesMenu() {
-    const filteredAttachments = (dataset) => {
-      if (dataset) {
-        const filtered = dataset.attachments.filter((attch) => {
-          const position = attch.filename.search(/[.]jdx$/);
-          return position > 0;
-        });
-        return filtered;
-      }
-      return false;
-    };
-
     const { sample } = this.props;
-    const listComparible = sample.getAnalysisContainersCompareable();
-    const menuItems = Object.keys(listComparible).map((layout) => {
-      const listAics = listComparible[layout].map((aic)=> {
-        const { children } = aic;
-        let subSubMenu = null;
-        if (children) {
-          subSubMenu = children.map((dts) => {
-            const attachments = filteredAttachments(dts);
-            const dataSetName = dts.name;
-            if (!attachments) {
-              return { title: dataSetName, value: dts, checkable: false };
-            }
-            const spectraItems = attachments.map((item) => {
-              return { title: item.filename, key: item.id, value: item.id }
-            });
-            return { title: dts.name, key: dts.id, value: dts, checkable: false , children: spectraItems };
-          });
-        }
-        return { title: aic.name, key: aic.id, children: subSubMenu, checkable: false };
-      });
-      return { title: layout, key: layout, value: layout, children: listAics, checkable: false }
-    });
+    const menuItems = BuildSpectraComparedSelection(sample);
     return menuItems;
   }
 

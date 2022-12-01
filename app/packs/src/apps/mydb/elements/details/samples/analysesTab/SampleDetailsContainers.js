@@ -257,6 +257,7 @@ export default class SampleDetailsContainers extends Component {
           />
           <ViewSpectraCompare 
             elementData={sample}
+            handleSampleChanged={handleSampleChanged}
           />
         </div>
       );

@@ -79,9 +79,10 @@ class SpectraStore {
     });
   }
 
-  handleToggleCompareModal() {
+  handleToggleCompareModal(container) {
     this.setState({
       showCompareModal: !this.showCompareModal,
+      container: container,
     })
   }
 

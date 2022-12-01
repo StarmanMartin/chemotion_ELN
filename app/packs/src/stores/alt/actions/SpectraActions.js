@@ -6,8 +6,8 @@ class SpectraActions {
     return null;
   }
 
-  ToggleCompareModal() {
-    return null;
+  ToggleCompareModal(container) {
+    return container;
   }
 
   LoadSpectra(spcInfos) {
