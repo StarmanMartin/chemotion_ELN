@@ -81,28 +81,35 @@ export default class ContainerCompareAnalyses extends Component {
     if (isChanged) this.onChange(container);
   }
 
-  handleChangeSelectAnalyses(treeData, value) {
+  handleChangeSelectAnalyses(treeData, selectedFiles, info) {
+    const getParentNode = (key, tree) => {
+      let parentNode;
+      for (let i = 0; i < tree.length; i++) {
+        const node = tree[i];
+        if (node.children) {
+          if (node.children.some(item => item.key === key)) {
+            parentNode = node;
+          } else if (getParentNode(key, node.children)) {
+            parentNode = getParentNode (key, node.children);
+          }
+        }
+      }
+      return parentNode;
+    }
+
     const { container } = this.state;
-    console.log(value);
-    console.log(treeData);
-    // const selectedData = treeData.filter((layout) => {
-    //   const analyses = layout.children;
-    //   console.log('analyses', analyses);
-    //   const selectedAnalysis = analyses.filter((aic) => {
-    //     const datasets = aic.children;
-    //     const selectedDataSet = datasets.filter((dts) => {
-    //       const listFiles = dts.children;
-    //       const selectedFiles = listFiles.map((file) => {
-    //         return value.includes(file.value);
-    //       });
-    //       return selectedFiles.length > 0;
-    //     });
-    //     return selectedDataSet.length > 0;
-    //   });
-    //   return selectedAnalysis.length > 0;
-    // });
-    // console.log('selectedData', selectedData);
-    container.extended_metadata.analyses_compared = value;
+    const selectedData = selectedFiles.map((fileID, idx) => {
+      const dataset = getParentNode(fileID, treeData);
+      const analysis = getParentNode(dataset.key, treeData);
+      const layout = getParentNode(analysis.key, treeData);
+      return { 
+        file: { name: info[idx], id: fileID },
+        dataset: { name: dataset.title, id: dataset.key },
+        analysis: { name: analysis.title, id: analysis.key },
+        layout: layout.title,
+       }
+    });
+    container.extended_metadata.analyses_compared = selectedData;
     this.onChange(container);
   }
 
@@ -145,7 +152,7 @@ export default class ContainerCompareAnalyses extends Component {
         }
         return { title: aic.name, key: aic.id, children: subSubMenu, checkable: false };
       });
-      return { title: layout, value: layout, children: listAics, checkable: false }
+      return { title: layout, key: layout, value: layout, children: listAics, checkable: false }
     });
     return menuItems;
   }

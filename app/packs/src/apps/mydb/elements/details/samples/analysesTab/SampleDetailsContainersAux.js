@@ -399,6 +399,9 @@ const HeaderNormal = ({
   } else {
     hasPop = false;
   }
+
+  const { analyses_compared } = container.extended_metadata;
+  
   return (
     <div
       className={`analysis-header ${mode === 'edit' ? '' : 'order'}`}
@@ -428,7 +431,22 @@ const HeaderNormal = ({
         <div className="lower-text">
           <div className="main-title">{container.name}</div>
           {
-            container.extended_metadata.is_comparison ? null : (
+            container.extended_metadata.is_comparison ? (
+              <>
+                <div className="sub-title">Layout: 
+                {
+                  (analyses_compared && analyses_compared.length > 0) ? analyses_compared[0].layout : ''
+                }
+                </div>
+                <div className="desc sub-title">Spectra: 
+                {
+                  (analyses_compared && analyses_compared.length > 0) ? analyses_compared.map((spectra) => (
+                    <p>{`-File: ${spectra.file.name}, dataset: ${spectra.dataset.name}, analysis: ${spectra.analysis.name}`}</p>
+                  )) : ''
+                }
+                </div>
+              </>
+            ) : (
               <>
                 <div className="sub-title">Type: {kind}</div>
                 <div className="sub-title">

@@ -91,9 +91,10 @@ const BuildSpectraComparedInfos = (sample, container) => {
   if (!sample || !container) return [];
   const { analyses_compared } = container.extended_metadata;
   if (!analyses_compared) return [];
-  return analyses_compared.map(file_id => (
+  return analyses_compared.map(data => (
     {
-      idx: file_id,
+      idx: data.file.id,
+      info: data
     }
   ));
 };

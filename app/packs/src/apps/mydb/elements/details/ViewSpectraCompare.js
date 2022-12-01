@@ -35,8 +35,6 @@ class ViewSpectraCompare extends React.Component {
 
   getContent() {
     console.log(this.state);
-    const { elementData } = this.props;
-    
   }
 
   closeOp() {
@@ -119,9 +117,8 @@ class ViewSpectraCompare extends React.Component {
   
   render() {
     const { showCompareModal, spectraCompare } = this.state;
-    console.log(spectraCompare);
 
-    this.getContent();
+    // this.getContent();
 
     return (
       <div className="spectra-editor">
