@@ -12,7 +12,8 @@
     "mtxr.sqltools",
     "mtxr.sqltools-driver-pg",
     "eamodio.gitlens",
-    "streetsidesoftware.code-spell-checker"
+    "streetsidesoftware.code-spell-checker",
+    "ms-playwright.playwright"
   ],
   "initializeCommand": [
     "/bin/bash",

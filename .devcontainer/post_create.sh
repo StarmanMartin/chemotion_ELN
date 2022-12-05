@@ -5,5 +5,7 @@ bundle update --bundler # update the bundler version in Gemfile.lock to the inst
 bundle install
 yarn install
 
+npx playwright install --with-deps chromium
+
 # set up database
 bundle exec rake db:setup
