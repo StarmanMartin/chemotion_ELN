@@ -9,7 +9,7 @@
       "database": "chemotion_dev",
       "username": "postgres",
       "password": ""
-    }
+    },
     {
       "previewLimit": 50,
       "server": "postgres",
