@@ -17,9 +17,11 @@ module Chemotion
       end
 
       def raw_file(att)
-        Base64.encode64(att.read_file)
-      rescue StandardError
-        nil
+        begin
+          Base64.encode64(att.read_file)
+        rescue
+          nil
+        end
       end
 
       def raw_file_obj(att)
